@@ -19,6 +19,7 @@ var languages = {
   'fr': 'Français',
   'pl': 'Polski',
   'ua': 'Українська',
+  'cz': 'Čeština',
 }
 
 $(document).ready(function() {
