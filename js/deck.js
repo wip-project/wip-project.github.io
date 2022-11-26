@@ -26,7 +26,7 @@ var base = {
       return hand.contains('Dwarvish Infantry') || hand.contains('Dragon') ? 25 : 0;
     },
     clearsPenalty: function (card) {
-      return card.suit === 'weather' || card.id === PHOENIX;
+      return card.suit === 'weather' || isPhoenix(card);
     },
     relatedSuits: ['weather'],
     relatedCards: ['Dwarvish Infantry', 'Dragon']
@@ -80,7 +80,7 @@ var base = {
     bonusScore: function (hand) {
       var max = 0;
       for (const card of hand.nonBlankedCards()) {
-        if (card.suit === 'weapon' || card.suit === 'flood' || card.suit === 'flame' || card.suit === 'land' || card.suit === 'weather' || card.id === PHOENIX) {
+        if (card.suit === 'weapon' || card.suit === 'flood' || card.suit === 'flame' || card.suit === 'land' || card.suit === 'weather' || isPhoenix(card)) {
           if (card.strength > max) {
             max = card.strength;
           }
@@ -118,7 +118,7 @@ var base = {
     blanks: function (card, hand) {
       return (card.suit === 'army' && !isArmyClearedFromPenalty(this, hand)) ||
         (card.suit === 'land' && card.name !== 'Mountain') ||
-        (card.suit === 'flame' && card.name !== 'Lightning') || card.id === PHOENIX;
+        (card.suit === 'flame' && card.name !== 'Lightning') || isPhoenix(card);
     },
     relatedSuits: ['army', 'land', 'flame'],
     relatedCards: ['Mountain', 'Lightning']
@@ -233,7 +233,7 @@ var base = {
       return !(card.suit === 'flame' || card.suit === 'wizard' || card.suit === 'weather' ||
         card.suit === 'weapon' || card.suit === 'artifact' || card.suit === 'wild' || card.name === 'Mountain' ||
         card.name === 'Great Flood' || card.name === 'Island' || card.name === 'Unicorn' || card.name === 'Dragon' ||
-        card.id === PHOENIX);
+        isPhoenix(card));
     },
     relatedSuits: allSuits(),
     relatedCards: ['Mountain', 'Great Flood', 'Island', 'Unicorn', 'Dragon']
@@ -368,22 +368,33 @@ var base = {
     penalty: false,
     bonusScore: function (hand) {
       var bySuit = {};
+      if (hand.containsId(PHOENIX_PROMO, true)) {
+        var phoenix = hand.getCardById(PHOENIX_PROMO);
+        bySuit['flame'] = {};
+        bySuit['flame'][phoenix.name] = phoenix;
+        bySuit['weather'] = {};
+        bySuit['weather'][phoenix.name] = phoenix;
+        bySuit[phoenix.suit] = {};
+        bySuit[phoenix.suit][phoenix.name] = phoenix;
+      }
       for (const card of hand.nonBlankedCards()) {
-        if (card.id === PHOENIX) {
-          if (bySuit['flame'] === undefined) {
-            bySuit['flame'] = {};
+        if (card.id !== PHOENIX_PROMO) {
+          if (card.id === PHOENIX) {
+            if (bySuit['flame'] === undefined) {
+              bySuit['flame'] = {};
+            }
+            bySuit['flame'][card.name] = card;
+            if (bySuit['weather'] === undefined) {
+              bySuit['weather'] = {};
+            }
+            bySuit['weather'][card.name] = card;
           }
-          bySuit['flame'][card.name] = card;
-          if (bySuit['weather'] === undefined) {
-            bySuit['weather'] = {};
+          var suit = card.suit;
+          if (bySuit[suit] === undefined) {
+            bySuit[suit] = {};
           }
-          bySuit['weather'][card.name] = card;
+          bySuit[suit][card.name] = card;
         }
-        var suit = card.suit;
-        if (bySuit[suit] === undefined) {
-          bySuit[suit] = {};
-        }
-        bySuit[suit][card.name] = card;
       }
       var bonus = 0;
       for (const suit of Object.values(bySuit)) {
@@ -721,7 +732,7 @@ var base = {
     bonusScore: function (hand) {
       var suits = [];
       for (const card of hand.nonBlankedCards()) {
-        if (card.id === PHOENIX) {
+        if (isPhoenix(card)) {
           if (suits.includes('weather') || suits.includes('flame')) {
             return 0;
           }
@@ -825,6 +836,19 @@ var base = {
     id: 'FR55',
     suit: 'beast',
     name: 'Phoenix',
+    strength: 14,
+    bonus: true,
+    penalty: true,
+    blankedIf: function (hand) {
+      return hand.containsSuit('flood');
+    },
+    relatedSuits: [],
+    relatedCards: []
+  },
+  'FR55P': {
+    id: 'FR55P',
+    suit: 'beast',
+    name: 'Phoenix (Promo)',
     strength: 14,
     bonus: true,
     penalty: true,
@@ -1090,7 +1114,7 @@ var cursedHoard = {
     bonusScore: function (hand) {
       var max = 0;
       for (const card of hand.nonBlankedCards()) {
-        if (card.suit === 'building' || card.suit === 'weapon' || card.suit === 'flood' || card.suit === 'flame' || card.suit === 'land' || card.suit === 'weather' || card.id === PHOENIX) {
+        if (card.suit === 'building' || card.suit === 'weapon' || card.suit === 'flood' || card.suit === 'flame' || card.suit === 'land' || card.suit === 'weather' || isPhoenix(card)) {
           if (card.strength > max) {
             max = card.strength;
           }
@@ -1155,7 +1179,7 @@ var cursedHoard = {
     bonusScore: function (hand) {
       var suits = [];
       for (const card of hand.nonBlankedCards()) {
-        if (card.id === PHOENIX) {
+        if (isPhoenix(card)) {
           if (suits.includes('weather') || suits.includes('flame')) {
             return 0;
           }
@@ -1512,6 +1536,10 @@ function allSuits() {
   return ['land', 'flood', 'weather', 'flame', 'army', 'wizard', 'leader', 'beast', 'weapon', 'artifact', 'wild', 'building', 'outsider', 'undead'].sort();
 }
 
+function isPhoenix(card) {
+  return card.id === PHOENIX || card.id === PHOENIX_PROMO;
+}
+
 var NONE = -1;
 var ISLAND = 'FR09';
 var NECROMANCER = 'FR28';
@@ -1520,6 +1548,7 @@ var SHAPESHIFTER = 'FR51';
 var MIRAGE = 'FR52';
 var DOPPELGANGER = 'FR53';
 var PHOENIX = 'FR55';
+var PHOENIX_PROMO = 'FR55P';
 
 var CH_NECROMANCER = 'CH20';
 var CH_SHAPESHIFTER = 'CH22';
