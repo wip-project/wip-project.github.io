@@ -1,8 +1,8 @@
-Handlebars.registerHelper('i18n', function() {
+Handlebars.registerHelper('i18n', function () {
   var key = '';
   for (var arg in arguments) {
     if (typeof arguments[arg] != 'object') {
-        key += arguments[arg];
+      key += arguments[arg];
     }
   }
   try {
@@ -23,25 +23,25 @@ var languages = {
   'kr': '한국어'
 }
 
-$(document).ready(function() {
-  const lang = localStorage.getItem('language') || 'en'; 
+$(document).ready(function () {
+  const lang = localStorage.getItem('language') || 'en';
   jQuery.i18n.properties({
-    name:'Messages', 
-    path:'i18n/', 
-    mode:'map',
+    name: 'Messages',
+    path: 'i18n/',
+    mode: 'map',
     cache: true,
     language: lang,
     async: true,
-    callback: function() {
+    callback: function () {
       configureSelectedPlayerCount();
       configureSelectedExpansions();
       showCards();
       getDiscardFromQueryString();
       getHandFromQueryString();
-      $('#ch_items').change(function() {
+      $('#ch_items').change(function () {
         toggleCursedHoardItems();
       });
-      $('#ch_suits').change(function() {
+      $('#ch_suits').change(function () {
         toggleCursedHoardSuits();
       });
       $('#sound-state').change(function () {
@@ -67,13 +67,13 @@ var inputDiscardArea = false;
 function selectLanguage(lang) {
   localStorage.setItem('language', lang);
   jQuery.i18n.properties({
-    name:'Messages', 
-    path:'i18n/', 
-    mode:'map',
+    name: 'Messages',
+    path: 'i18n/',
+    mode: 'map',
     cache: true,
     language: lang,
     async: true,
-    callback: function() {
+    callback: function () {
       swoosh.play();
       showCards();
       updateLabels(lang);
@@ -110,7 +110,7 @@ function configureSelectedExpansions() {
         return;
       }
     }
-  } 
+  }
   if (localStorage.getItem('ch_items') === true || localStorage.getItem('ch_items') === 'true') {
     cursedHoardItems = true;
     deck.enableCursedHoardItems();
@@ -120,7 +120,7 @@ function configureSelectedExpansions() {
     cursedHoardSuits = true;
     deck.enableCursedHoardSuits();
     $('#ch_suits').prop('checked', true);
-  }  
+  }
 }
 
 function configureSelectedPlayerCount() {
@@ -133,9 +133,9 @@ function configureSelectedPlayerCount() {
         return;
       }
     }
-  } 
+  }
   if (localStorage.getItem('playerCount')) {
-      playerCount = localStorage.getItem('playerCount');
+    playerCount = localStorage.getItem('playerCount');
   }
 }
 
@@ -248,7 +248,7 @@ function selectFromHand(id) {
     magic.play();
     var angel = hand.getCardById(CH_ANGEL);
     angel.actionData = [id];
-    updateHandView();  
+    updateHandView();
   } else if (actionId === NONE) {
     removeFromHand(id);
   }

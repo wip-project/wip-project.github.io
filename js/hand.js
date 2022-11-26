@@ -128,7 +128,7 @@ class Hand {
   }
 
   nonBlankedCards() {
-    return this.cards().filter(function(card) {
+    return this.cards().filter(function (card) {
       return !card.blanked;
     });
   }
@@ -142,7 +142,7 @@ class Hand {
   }
 
   cardNames() {
-    return this.cards().map(function(card) {
+    return this.cards().map(function (card) {
       return card.name;
     });
   }
@@ -270,7 +270,7 @@ class Hand {
   }
 
   _defaultLimit() {
-    return 7 + (cursedHoardSuits ? 1: 0);
+    return 7 + (cursedHoardSuits ? 1 : 0);
   }
 
   _limitWithoutNecromancer() {
@@ -296,7 +296,7 @@ class Hand {
         actions.push(card.id + ':' + card.actionData.join(':'));
       }
     }
-    return Object.keys({...this.cardsInHand, ...this.cursedItems}).join() + '+' + actions.join();
+    return Object.keys({ ...this.cardsInHand, ...this.cursedItems }).join() + '+' + actions.join();
   }
 
   loadFromString(string) {
@@ -399,7 +399,7 @@ class CardInHand {
         if (selectedCard === undefined || !(selectedCard.suit === 'flood' || selectedCard.suit === 'flame' || selectedCard.id === PHOENIX)) {
           this.actionData = undefined;
         } else {
-          this.clearsPenalty = function(card) {
+          this.clearsPenalty = function (card) {
             return card.id === selectedCard.id;
           }
           selectedCard.magic = true;
