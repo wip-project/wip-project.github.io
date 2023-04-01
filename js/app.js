@@ -37,6 +37,7 @@ $(document).ready(function () {
     callback: function () {
       configureSelectedPlayerCount();
       configureSelectedExpansions();
+      configureSound();
       showCards();
       getDiscardFromQueryString();
       getHandFromQueryString();
@@ -46,7 +47,7 @@ $(document).ready(function () {
       $('#ch_suits').change(function () {
         toggleCursedHoardSuits();
       });
-      $('#sound-state').change(function () {
+      $('#sound_state').change(function () {
         toggleSound();
       });
       updateLabels(lang);
@@ -125,6 +126,13 @@ function configureSelectedExpansions() {
   }
 }
 
+function configureSound() {
+  if (localStorage.getItem('sound_state') === false || localStorage.getItem('sound_state') === 'false') {
+    click.muted = swoosh.muted = clear.muted = magic.muted = true;
+    $('#sound_state').prop('checked', false);
+  }
+}
+
 function configureSelectedPlayerCount() {
   if (window.location.search) {
     var params = window.location.search.substring(1).split('&');
@@ -163,6 +171,13 @@ function toggleCursedHoardSuits() {
   reset();
 }
 
+function toggleSound() {
+  const enabled = $('#sound_state').prop('checked');
+  localStorage.setItem('sound_state', enabled);
+  click.muted = swoosh.muted = clear.muted = magic.muted = !enabled;
+  clear.play();
+}
+
 function setPlayerCount(count) {
   click.play();
   playerCount = count;
@@ -182,11 +197,6 @@ function reset() {
   inputDiscardArea = false;
   $("#discard").hide();
   $("#hand").show();
-}
-
-function toggleSound() {
-  click.muted = swoosh.muted = clear.muted = magic.muted = !click.muted;
-  clear.play();
 }
 
 function addToView(id) {
