@@ -692,31 +692,39 @@ var base = {
     bonus: true,
     penalty: false,
     bonusScore: function (hand) {
-      var strengths = hand.nonBlankedCards().map(card => card.strength);
-      var currentRun = 0;
-      var runs = [];
-      for (var i = 0; i <= 40; i++) {
-        if (strengths.includes(i)) {
-          currentRun++;
-        } else {
-          runs.push(currentRun);
-          currentRun = 0;
-        }
-      }
+      var strengths = hand.nonBlankedCards().map(card => card.strength).sort(function (a, b) { return a - b; });
       var bonus = 0;
-      for (var run of runs) {
-        if (run === 3) {
-          bonus += 10;
-        } else if (run === 4) {
-          bonus += 30;
-        } else if (run === 5) {
-          bonus += 60;
-        } else if (run === 6) {
-          bonus += 100;
-        } else if (run >= 7) {
-          bonus += 150;
+      var runFound = false;
+      do {
+        var run = [];
+        for (var i = 0; i < strengths.length; i++) {
+          var strength = strengths[i];
+          if (run.length !== 0 && (strength === run[run.length - 1] + 1)) {
+            run.push(strength);
+          } else if (run.length < 3 && !run.includes(strength)) {
+            run = [strength];
+          }
         }
-      }
+        if (run.length < 3) {
+          runFound = false;
+        } else {
+          runFound = true;
+          for (var i = 0; i < run.length; i++) {
+            strengths.splice(strengths.indexOf(run[i]), 1);
+          }
+          if (run.length === 3) {
+            bonus += 10;
+          } else if (run.length === 4) {
+            bonus += 30;
+          } else if (run.length === 5) {
+            bonus += 60;
+          } else if (run.length === 6) {
+            bonus += 100;
+          } else if (run.length >= 7) {
+            bonus += 150;
+          }
+        }
+      } while (runFound);
       return bonus;
     },
     relatedSuits: [],

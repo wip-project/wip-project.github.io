@@ -21,6 +21,7 @@ $(document).ready(function () {
   assertScoreByCode('FR26,FR27,FR30,FR36,FR38,FR39,FR40+', 193, 'Collector can score multiple sets');
   assertScoreByCode('FR26,FR46,FR47,FR51,FR53+FR51:FR46,FR53:FR46', 20, 'Collector does not score duplicated cards');
   assertScoreByCode('FR22,FR31,FR36,FR43,FR44,FR46,FR47+', 206, 'Gem of Order can score multiple sets');
+  assertScoreByCode('FR46,FR47,FR02,FR05,FR25,FR32+', 105, 'Gem of Order can score multiple identical sets')
   assertScoreByCode('FR16,FR49,FR11,FR12+FR49:FR12:flood', 11, 'Blanking I');
   assertScoreByCode('FR12,FR08,FR16,FR49+FR49:FR12:beast', 3, 'Blanking II');
   assertScoreByCode('FR49,FR41,FR37,FR21+FR49:FR37:flood', 73, 'Blanking III');
