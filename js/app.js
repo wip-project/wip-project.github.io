@@ -22,7 +22,8 @@ var languages = {
   'ua': 'Українська',
   'cz': 'Čeština',
   'kr': '한국어',
-  'ru': 'Русский'
+  'ru': 'Русский',
+  'zh-CN': '简体中文'
 }
 
 $(document).ready(function () {
